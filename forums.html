@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizon Network - Forum</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <style>
+        /* Forum specific styles */
+        .forum-container {
+            max-width: 800px;
+            margin: auto;
+            text-align: left;
+        }
+        .thread {
+            background-color: #222;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .thread h3 {
+            margin: 0 0 10px 0;
+            color: #ffcc00;
+        }
+        .thread p {
+            margin: 0;
+            color: #ddd;
+        }
+        .new-thread {
+            margin-top: 30px;
+            background-color: #222;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .new-thread input, .new-thread textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #1a1a1a;
+            color: #f1f1f1;
+        }
+        .new-thread button {
+            margin-top: 10px;
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .new-thread button:hover {
+            background-color: #e6b800;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Horizon Network</h1>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="ip.html">Server IP</a>
+        <a href="about.html">About</a>
+        <a href="forum.html">Forum</a>
+    </nav>
+    <main>
+        <h2>Community Forum</h2>
+        <div class="forum-container">
+
+            <!-- Example threads -->
+            <div class="thread">
+                <h3>Welcome to the Horizon Network Forum!</h3>
+                <p>Posted by Admin: Feel free to introduce yourself and ask questions here.</p>
+            </div>
+
+            <div class="thread">
+                <h3>Looking for team members</h3>
+                <p>Posted by Player123: I need help on my SkyBlock island, anyone interested?</p>
+            </div>
+
+            <!-- New thread form -->
+            <div class="new-thread">
+                <h3>Create a New Thread</h3>
+                <input type="text" id="threadTitle" placeholder="Thread title">
+                <textarea id="threadContent" rows="4" placeholder="Your message"></textarea>
+                <button onclick="addThread()">Post Thread</button>
+            </div>
+
+        </div>
+    </main>
+    <footer>
+        &copy; 2025 Horizon Network
+    </footer>
+
+    <script>
+        // Function to add new thread (front-end only)
+        function addThread() {
+            const title = document.getElementById('threadTitle').value.trim();
+            const content = document.getElementById('threadContent').value.trim();
+
+            if (!title || !content) {
+                alert("Please enter a title and message.");
+                return;
+            }
+
+            const forumContainer = document.querySelector('.forum-container');
+
+            const threadDiv = document.createElement('div');
+            threadDiv.className = 'thread';
+            threadDiv.innerHTML = `<h3>${title}</h3><p>${content}</p>`;
+
+            forumContainer.insertBefore(threadDiv, document.querySelector('.new-thread'));
+
+            // Clear inputs
+            document.getElementById('threadTitle').value = '';
+            document.getElementById('threadContent').value = '';
+        }
+    </script>
+</body>
+</html>
