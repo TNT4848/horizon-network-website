@@ -3,45 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horizon Network - Forum</title>
+    <title>Horizon Network - Community Forum</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
     <style>
-        /* Forum page specific styles */
+        /* Forum Specific Styling */
+        :root {
+            --gold: #ffcc00;
+            --dark-bg: #1a1a1a;
+            --card-bg: #262626;
+            --text-light: #eeeeee;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            text-align: center;
+        }
+
         .forum-container {
             max-width: 800px;
-            margin: auto;
+            margin: 40px auto;
+            padding: 0 20px;
             text-align: left;
         }
+
         h2 {
-            color: #ffcc00;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* The Input Form */
+        .post-box {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 40px;
+            border: 1px solid #333;
+        }
+
+        .post-box input, .post-box textarea {
+            width: 100%;
+            background: #111;
+            border: 1px solid #444;
+            color: white;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            box-sizing: border-box; /* Fixes width issues */
+            font-size: 16px;
+        }
+
+        .post-box button {
+            background: var(--gold);
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .post-box button:hover {
+            background: #e6b800;
+            transform: translateY(-2px);
+        }
+
+        /* The Feed */
+        .forum-post {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--gold);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .post-user {
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .post-date {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
+
     <header>
         <h1>Horizon Network</h1>
     </header>
+
     <nav>
         <a href="index.html">Home</a>
         <a href="ip.html">Server IP</a>
         <a href="about.html">About</a>
-        <a href="forum.html">Forum</a>
+        <a href="forum.html" class="active">Forum</a>
     </nav>
-    <main>
-        <h2>Community Forum</h2>
-        <div class="forum-container">
-            <!-- Website Toolbox Forum Embed -->
-            <div id="wtEmbedCode">
-                <script type="text/javascript" id="embedded_forum" src="https://forum.horizon-net.net/js/mb/embed.js" data-version="1.1"></script>
-                <noscript>
-                    <a href="https://forum.horizon-net.net/">Community Forum</a>
-                </noscript>
-            </div>
+
+    <main class="forum-container">
+        <h2>Community Feed</h2>
+
+        <div class="post-box">
+            <input type="text" id="username" placeholder="Username...">
+            <textarea id="message" placeholder="Write a post..."></textarea>
+            <button onclick="sendPost()">Submit Post</button>
+        </div>
+
+        <div id="posts-list">
+            <p style="text-align: center; color: #888;">Waking up the database... please wait.</p>
         </div>
     </main>
+
     <footer>
-        &copy; 2025 Horizon Network
+        &copy; 2026 Horizon Network
     </footer>
+
+    <script>
+        // CHANGE THIS to your actual Render URL
+        const API_URL = 'https://your-app-name.onrender.com';
+
+        async function loadPosts() {
+            try {
+                const response = await fetch(`${API_URL}/posts`);
+                const posts = await response.json();
+                const list = document.getElementById('posts-list');
+                
+                if (posts.length === 0) {
+                    list.innerHTML = "<p style='text-align:center;'>No messages yet. Be the first to post!</p>";
+                    return;
+                }
+
+                // Show newest posts at the top
+                list.innerHTML = posts.reverse().map(post => `
+                    <div class="forum-post">
+                        <div class="post-header">
+                            <span class="post-user">${post.username}</span>
+                            <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('posts-list').innerHTML = 
+                    "<p style='color: #ff4444; text-align:center;'>Unable to connect to the forum server.</p>";
+            }
+        }
+
+        async function sendPost() {
+            const user = document.getElementById('username').value;
+            const msg = document.getElementById('message').value;
+
+            if (!user || !msg) {
+                alert("Please fill in both name and message!");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/posts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, content: msg })
+                });
+
+                if (response.ok) {
+                    document.getElementById('message').value = '';
+                    loadPosts(); // Refresh feed
+                }
+            } catch (err) {
+                alert("Error sending post. Check console.");
+            }
+        }
+
+        // Run on page load
+        loadPosts();
+    </script>
 </body>
 </html>
